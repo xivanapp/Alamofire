@@ -24,7 +24,7 @@
 
 import Foundation
 
-private protocol Lock {
+private protocol Lock: Sendable {
     func lock()
     func unlock()
 }
@@ -51,7 +51,7 @@ extension Lock {
 
 #if canImport(Darwin)
 /// An `os_unfair_lock` wrapper.
-final class UnfairLock: Lock {
+final class UnfairLock: Lock, @unchecked Sendable {
     private let unfairLock: os_unfair_lock_t
 
     init() {
@@ -89,7 +89,7 @@ final class Protected<Value> {
     #else
     #error("This platform needs a Lock-conforming type without Foundation.")
     #endif
-    private var value: Value
+    private nonisolated(unsafe) var value: Value
 
     init(_ value: Value) {
         self.value = value
@@ -130,6 +130,8 @@ final class Protected<Value> {
         lock.around { value[keyPath: keyPath] }
     }
 }
+
+extension Protected: Sendable {}
 
 extension Protected where Value == Request.MutableState {
     /// Attempts to transition to the passed `State`.
