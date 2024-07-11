@@ -23,7 +23,9 @@
 //
 
 import Foundation
+#if canImport(Security)
 @preconcurrency import Security
+#endif
 
 /// Responsible for managing the mapping of `ServerTrustEvaluating` values to given hosts.
 open class ServerTrustManager: @unchecked Sendable {

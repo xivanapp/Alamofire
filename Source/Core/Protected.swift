@@ -89,8 +89,12 @@ final class Protected<Value> {
     #else
     #error("This platform needs a Lock-conforming type without Foundation.")
     #endif
+    #if compiler(>=6)
     private nonisolated(unsafe) var value: Value
-
+    #else
+    private var value: Value
+    #endif
+    
     init(_ value: Value) {
         self.value = value
     }
