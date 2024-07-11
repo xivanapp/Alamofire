@@ -184,12 +184,6 @@ public class DataRequest: Request {
         return self
     }
 
-    #if compiler(>=6)
-    public typealias ResponseHandler = @Sendable (HTTPURLResponse) -> Void
-    #else
-    public typealias ResponseHandler = (HTTPURLResponse) -> Void
-    #endif
-
     /// Sets a closure called whenever the `DataRequest` produces an `HTTPURLResponse`.
     ///
     /// - Parameters:
@@ -199,7 +193,7 @@ public class DataRequest: Request {
     /// - Returns:   The instance.
     @discardableResult
     public func onHTTPResponse(on queue: DispatchQueue = .main,
-                               perform handler: @escaping ResponseHandler) -> Self {
+                               perform handler: @Sendable @escaping (HTTPURLResponse) -> Void) -> Self {
         onHTTPResponse(on: queue) { response, completionHandler in
             handler(response)
             completionHandler(.allow)
