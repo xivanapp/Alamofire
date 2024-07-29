@@ -505,6 +505,8 @@ open class DownloadRequest: Request {
     ///
     /// - parameter createResumeData: Determines whether resume data is created via the underlying download task or not.
     open func cancel(createResumeData: Bool) {
+        guard let task = task else { return }
+
         if createResumeData {
             downloadDelegate.downloadTask.cancel { self.downloadDelegate.resumeData = $0 }
         } else {
